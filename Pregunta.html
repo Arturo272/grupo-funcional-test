@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>¿Qué grupo funcional eres?</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg, #0f172a, #1e293b, #334155);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+}
+
+.contenedor{
+    width:90%;
+    max-width:700px;
+    background:#64748b;
+    padding:40px;
+    border-radius:25px;
+    box-shadow:0px 0px 25px rgba(0,0,0,0.4);
+}
+
+.barra-fondo{
+    width:100%;
+    height:25px;
+    background:#cbd5e1;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:35px;
+}
+
+.barra{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#22c55e,#16a34a);
+    transition:0.5s;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.pregunta{
+    font-size:1.5rem;
+    margin-bottom:30px;
+    text-align:center;
+}
+
+.respuestas{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.respuesta{
+    padding:15px;
+    border:none;
+    border-radius:15px;
+    background:#e2e8f0;
+    cursor:pointer;
+    font-size:1rem;
+    transition:0.3s;
+}
+
+.respuesta:hover{
+    background:#38bdf8;
+    transform:scale(1.03);
+}
+
+.seleccionado{
+    background:#22c55e;
+    color:white;
+    transform:scale(1.03);
+    box-shadow:0px 0px 15px rgba(34,197,94,0.6);
+}
+
+.boton-avanzar{
+    margin-top:30px;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:15px;
+    background:#22c55e;
+    color:white;
+    font-size:1.1rem;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.boton-avanzar:hover{
+    background:#16a34a;
+}
+
+.resultado{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100vh;
+    background:rgba(15,23,42,0.95);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    padding:30px;
+    z-index:1000;
+}
+
+.resultado img{
+    width:250px;
+    margin-bottom:20px;
+    border-radius:20px;
+}
+
+.resultado h2{
+    font-size:3rem;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.resultado p{
+    max-width:600px;
+    margin-bottom:30px;
+    font-size:1.2rem;
+}
+
+.botonesCompartir button{
+    padding:15px 30px;
+    border:none;
+    border-radius:15px;
+    background:#22c55e;
+    color:white;
+    font-size:1rem;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="barra-fondo">
+        <div class="barra" id="barra"></div>
+    </div>
+
+    <h1>¿Qué grupo funcional eres?</h1>
+
+    <div class="pregunta" id="pregunta"></div>
+
+    <div class="respuestas" id="respuestas"></div>
+
+    <button class="boton-avanzar" onclick="avanzarPregunta()">
+        Avanzar
+    </button>
+
+</div>
+
+<div class="resultado" id="resultado">
+
+    <img id="imagenResultado" src="">
+
+    <h2 id="tituloResultado"></h2>
+
+    <p id="descripcionResultado"></p>
+
+    <div class="botonesCompartir">
+
+        <button onclick="compartir()"></button>
+
+    </div>
+
+</div>
+
+<script>
+
+// PUNTOS
+let puntos = {
+
+    alcohol:0,
+    cetona:0,
+    aldehido:0,
+    acido:0,
+    ester:0,
+    amina:0,
+    amida:0,
+    eter:0,
+    alcano:0,
+    alqueno:0,
+    alquino:0,
+    fenol:0,
+    tiol:0
+
+};
+
+// RESPUESTA
+let respuestaSeleccionada = "";
+
+// NUMERO DE PREGUNTA
+let preguntaActual = 0;
+
+// PREGUNTAS
+const preguntas = [
+
+{
+    pregunta:"Llegas al laboratorio y olvidaste la calculadora. Tú:",
+
+    respuestas:[
+
+        {texto:"Improviso mentalmente y sale raro", valor:"cetona"},
+        {texto:"Pido ayuda amablemente", valor:"amida"},
+        {texto:"Entro en crisis existencial", valor:"ácido"},
+        {texto:"Me río y continúo como si nada", valor:"alcohol"}
+
+    ]
+},
+
+{
+    pregunta:"Tu compañero quiere pipetear con la boca. Tú:",
+
+    respuestas:[
+
+        {texto:"Le digo que eso es ilegal químicamente", valor:"amina"},
+        {texto:"Me da risa pero sí me preocupa", valor:"ester"},
+        {texto:"Finjo no haber visto nada", valor:"éter"},
+        {texto:"Le tomo foto para evidencia histórica", valor:"fenol"}
+
+    ]
+},
+
+{
+    pregunta:"Tu reacción cuando dicen “hay reporte para mañana”:",
+
+    respuestas:[
+
+        {texto:"Ya casi lo tenía listo", valor:"amida"},
+        {texto:"Empiezo a escribir a las 2 AM", valor:"alquino"},
+        {texto:"Me hago bolita emocional", valor:"ácido"},
+        {texto:"Confío en el poder del copiar y pegar", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"En una peda universitaria tú:",
+
+    respuestas:[
+
+        {texto:"Hablas con todo el mundo", valor:"alcohol"},
+        {texto:"Desapareces misteriosamente", valor:"éter"},
+        {texto:"Te quedas filosofando raro", valor:"fenol"},
+        {texto:"Te duermes en una silla", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"Tu cuarto de foráneo parece:",
+
+    respuestas:[
+
+        {texto:"Un laboratorio clandestino", valor:"alquino"},
+        {texto:"Sorprendentemente ordenado", valor:"amida"},
+        {texto:"Bonito pero caótico", valor:"ester"},
+        {texto:"Una zona de desastre químico", valor:"aldehido"}
+
+    ]
+},
+
+{
+    pregunta:"Si una práctica explota, tú:",
+
+    respuestas:[
+
+        {texto:"Gritas primero y piensas después", valor:"aldehido"},
+        {texto:"Intentas salvar la situación", valor:"amina"},
+        {texto:"Te ríes del caos", valor:"alcohol"},
+        {texto:"Te quedas congelado viendo el humo", valor:"éter"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando trabajas en equipo:",
+
+    respuestas:[
+
+        {texto:"Haces todo porque nadie más puede", valor:"amida"},
+        {texto:"Motivas al grupo aunque no entiendas", valor:"alcohol"},
+        {texto:"Solo apareces al final", valor:"alcano"},
+        {texto:"Das ideas demasiado raras", valor:"cetona"}
+
+    ]
+},
+
+{
+    pregunta:"Tu vida amorosa es:",
+
+    respuestas:[
+
+        {texto:"Inestable y peligrosa", valor:"ácido"},
+        {texto:"Bonita pero breve", valor:"ester"},
+        {texto:"Muy intensa y confusa", valor:"alqueno"},
+        {texto:"No existe", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"Tu nivel de sueño en clase:",
+
+    respuestas:[
+
+        {texto:"Peleo por mantenerme vivo", valor:"alquino"},
+        {texto:"Sobrevivo gracias al café", valor:"amina"},
+        {texto:"Estoy físicamente pero no espiritualmente", valor:"éter"},
+        {texto:"Ya me adapté al sufrimiento", valor:"amida"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando el profe pregunta algo:",
+
+    respuestas:[
+
+        {texto:"Respondo aunque esté inseguro", valor:"amina"},
+        {texto:"Evito contacto visual", valor:"éter"},
+        {texto:"Invento algo científicamente dudoso", valor:"cetona"},
+        {texto:"Me escondo detrás de alguien", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"Tu reacción al estrés:",
+
+    respuestas:[
+
+        {texto:"Exploto emocionalmente", valor:"ácido"},
+        {texto:"Hago chistes para sobrevivir", valor:"alcohol"},
+        {texto:"Me desaparezco del mundo", valor:"éter"},
+        {texto:"Sigo funcionando misteriosamente", valor:"amida"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando cocinas siendo foráneo:",
+
+    respuestas:[
+
+        {texto:"Huele extraño pero sabe bien", valor:"tiol"},
+        {texto:"Quemo algo accidentalmente", valor:"aldehido"},
+        {texto:"Sale sorprendentemente bonito", valor:"ester"},
+        {texto:"Solo hago noodles", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"En el laboratorio tú eres:",
+
+    respuestas:[
+
+        {texto:"El responsable", valor:"amida"},
+        {texto:"El caótico", valor:"alquino"},
+        {texto:"El sociable", valor:"alcohol"},
+        {texto:"El raro inteligente", valor:"fenol"}
+
+    ]
+},
+
+{
+    pregunta:"Tu mochila universitaria contiene:",
+
+    respuestas:[
+
+        {texto:"Miles de hojas organizadas", valor:"amida"},
+        {texto:"Comida olvidada hace semanas", valor:"tiol"},
+        {texto:"Solo esperanza y estrés", valor:"ácido"},
+        {texto:"Cables que nadie entiende", valor:"cetona"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando repruebas un examen:",
+
+    respuestas:[
+
+        {texto:"Planeo recuperarme estratégicamente", valor:"amina"},
+        {texto:"Finjo estabilidad emocional", valor:"amida"},
+        {texto:"Me derrito internamente", valor:"ácido"},
+        {texto:"Digo “era obvio” y sigo", valor:"alcohol"}
+
+    ]
+},
+
+{
+    pregunta:"Tu energía un lunes:",
+
+    respuestas:[
+
+        {texto:"Químicamente inexistente", valor:"alcano"},
+        {texto:"Violentamente activa", valor:"alqueno"},
+        {texto:"Extrañamente funcional", valor:"cetona"},
+        {texto:"Necesito vacaciones", valor:"ácido"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando haces exposiciones:",
+
+    respuestas:[
+
+        {texto:"Improviso todo", valor:"alcohol"},
+        {texto:"Practico demasiado", valor:"amida"},
+        {texto:"Hablo raro pero interesante", valor:"fenol"},
+        {texto:"Entro en pánico discretamente", valor:"aldehido"}
+
+    ]
+},
+
+{
+    pregunta:"Tu relación con el café:",
+
+    respuestas:[
+
+        {texto:"Dependencia total", valor:"amina"},
+        {texto:"Ya no me hace efecto", valor:"alquino"},
+        {texto:"Lo tomo socialmente", valor:"alcohol"},
+        {texto:"Prefiero dormir... si pudiera", valor:"éter"}
+
+    ]
+},
+
+{
+    pregunta:"Si fueras un compañero de laboratorio:",
+
+    respuestas:[
+
+        {texto:"El organizado", valor:"amida"},
+        {texto:"El divertido", valor:"ester"},
+        {texto:"El peligroso", valor:"alquino"},
+        {texto:"El impredecible", valor:"aldehido"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando limpias material:",
+
+    respuestas:[
+
+        {texto:"Lo dejo impecable", valor:"amida"},
+        {texto:"Solo lo enjuago rápido", valor:"alcano"},
+        {texto:"Me distraigo y rompo algo", valor:"aldehido"},
+        {texto:"Empiezo bien y luego me aburro", valor:"éter"}
+
+    ]
+},
+
+{
+    pregunta:"Tu forma de estudiar:",
+
+    respuestas:[
+
+        {texto:"Todo organizado y bonito", valor:"amida"},
+        {texto:"Caos absoluto la noche anterior", valor:"alquino"},
+        {texto:"Videos raros de internet", valor:"fenol"},
+        {texto:"Leo una vez y rezo", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"Si alguien te cae mal:",
+
+    respuestas:[
+
+        {texto:"Lo oculto elegantemente", valor:"ester"},
+        {texto:"Me vuelvo pasivo-agresivo", valor:"ácido"},
+        {texto:"Hago comentarios raros", valor:"fenol"},
+        {texto:"Simplemente desaparezco", valor:"éter"}
+
+    ]
+},
+
+{
+    pregunta:"Tu mesa de laboratorio normalmente:",
+
+    respuestas:[
+
+        {texto:"Está perfectamente limpia", valor:"amida"},
+        {texto:"Tiene sustancias sospechosas", valor:"cetona"},
+        {texto:"Es un caos organizado", valor:"alcohol"},
+        {texto:"Parece escena del crimen", valor:"alquino"}
+
+    ]
+},
+
+{
+    pregunta:"Tu estado mental en finales:",
+
+    respuestas:[
+
+        {texto:"Estable pero roto por dentro", valor:"amida"},
+        {texto:"Sobrecalentado", valor:"ácido"},
+        {texto:"Extrañamente feliz", valor:"alcohol"},
+        {texto:"Funcionando por pura terquedad", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando alguien dice “es fácil”:",
+
+    respuestas:[
+
+        {texto:"Desconfío inmediatamente", valor:"fenol"},
+        {texto:"Finjo que también entendí", valor:"éter"},
+        {texto:"Acepto el reto", valor:"alqueno"},
+        {texto:"Me preparo para sufrir", valor:"ácido"}
+
+    ]
+},
+
+{
+    pregunta:"Si fueras olor de laboratorio:",
+
+    respuestas:[
+
+        {texto:"Alcohol etílico", valor:"alcohol"},
+        {texto:"Algo raro pero interesante", valor:"fenol"},
+        {texto:"Algo fuerte e inolvidable", valor:"tiol"},
+        {texto:"Nada porque no reacciono", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"Tu reacción cuando cambian el protocolo:",
+
+    respuestas:[
+
+        {texto:"Me adapto rápido", valor:"amina"},
+        {texto:"Entro en crisis", valor:"ácido"},
+        {texto:"Improviso peligrosamente", valor:"aldehido"},
+        {texto:"Ni sabía el protocolo original", valor:"alcano"}
+
+    ]
+},
+
+{
+    pregunta:"Tu cara después de una práctica de 4 horas:",
+
+    respuestas:[
+
+        {texto:"Vacío absoluto", valor:"éter"},
+        {texto:"Satisfacción científica", valor:"amina"},
+        {texto:"Sobreviví apenas", valor:"alquino"},
+        {texto:"Felicidad inexplicable", valor:"alcohol"}
+
+    ]
+},
+
+{
+    pregunta:"Cuando haces amigos en la carrera:",
+
+    respuestas:[
+
+        {texto:"Me adopta un extrovertido", valor:"éter"},
+        {texto:"Hablo con todos", valor:"alcohol"},
+        {texto:"Solo con personas raras como yo", valor:"fenol"},
+        {texto:"Primero evalúo si son responsables", valor:"amida"}
+
+    ]
+},
+
+{
+    pregunta:"Última pregunta: tu existencia universitaria es:",
+
+    respuestas:[
+
+        {texto:"Un caos estable", valor:"cetona"},
+        {texto:"Una reacción explosiva", valor:"alquino"},
+        {texto:"Extraña pero funcional", valor:"fenol"},
+        {texto:"Milagrosamente sobreviviente", valor:"alcano"}
+
+    ]
+}
+
+];
+
+// MOSTRAR PRIMERA PREGUNTA
+cargarPregunta();
+
+function cargarPregunta(){
+
+    document.getElementById("pregunta").innerText =
+    preguntas[preguntaActual].pregunta;
+
+    let contenedor = document.getElementById("respuestas");
+
+    contenedor.innerHTML = "";
+
+    preguntas[preguntaActual].respuestas.forEach(respuesta => {
+
+        contenedor.innerHTML += `
+
+        <button
+        class="respuesta"
+        onclick="seleccionar('${respuesta.valor}', event)">
+
+        ${respuesta.texto}
+
+        </button>
+
+        `;
+
+    });
+
+}
+
+// SELECCIONAR
+function seleccionar(valor, event){
+
+    respuestaSeleccionada = valor;
+
+    let botones = document.querySelectorAll(".respuesta");
+
+    botones.forEach(boton => {
+        boton.classList.remove("seleccionado");
+    });
+
+    event.target.classList.add("seleccionado");
+
+}
+
+// AVANZAR
+function avanzarPregunta(){
+
+    if(respuestaSeleccionada == ""){
+
+        alert("Selecciona una respuesta 😾");
+
+        return;
+    }
+
+    puntos[respuestaSeleccionada]++;
+
+    preguntaActual++;
+
+    let progreso =
+    (preguntaActual / preguntas.length) * 100;
+
+    document.getElementById("barra").style.width =
+    progreso + "%";
+
+    respuestaSeleccionada = "";
+
+    if(preguntaActual >= preguntas.length){
+
+        mostrarResultado();
+
+        return;
+    }
+
+    cargarPregunta();
+
+}
+
+// GANADOR
+function obtenerGanador(){
+
+    let mayor = 0;
+    let ganador = "";
+
+    for(let grupo in puntos){
+
+        if(puntos[grupo] > mayor){
+
+            mayor = puntos[grupo];
+            ganador = grupo;
+
+        }
+
+    }
+
+    return ganador;
+
+}
+
+// RESULTADO
+function mostrarResultado(){
+
+    let resultado = obtenerGanador();
+
+    let grupo = "";
+    let descripcion = "";
+    let imagen = "";
+
+    if(resultado == "alcohol"){
+    grupo = "Alcohol 🍺";
+    descripcion = "Eres sociable, reactivo y probablemente el caos del grupo.";
+    imagen = "https://upload.wikimedia.org/wikipedia/commons/9/93/Alcohol-%28general%29-skeletal.png";
+}
+else if(resultado == "ester"){
+    grupo = "Éster 🍓";
+    descripcion = "Hueles delicioso y tienes toda la vibra 'aesthetic'. Eres quien le da el toque dulce y buena onda al grupo.";
+    imagen = "https://upload.wikimedia.org/wikipedia/commons/5/58/Ester.svg";
+}
+else if(resultado == "amida"){
+    grupo = "Amida 👔";
+    descripcion = "La estructura del grupo. Eres hiperestable, súper maduro(a) y el que siempre tiene que cuidar a los demás en las fiestas.";
+    imagen = "https://i0.wp.com/www.estudiosfarmaceuticos.com/wp-content/uploads/2020/08/word-image-233.png?resize=194%2C174&ssl=1";
+}
+else if(resultado == "amina"){
+    grupo = "Amina 🐠";
+    descripcion = "Tienes una personalidad... intensa. O te aman o te odian, no hay punto medio. Ah, y a veces tu cuarto huele raro.";
+    imagen = "https://www.lifeder.com/wp-content/uploads/2019/01/FunktionelleGruppen_Amine.svg.png";
+}
+else if(resultado == "alqueno"){
+    grupo = "Alqueno ⚡";
+    descripcion = "Tienes una energía doble. No te quedas quieto(a) y te encanta romper la rutina. Un poco inestable si te provocan.";
+    imagen = "https://upload.wikimedia.org/wikipedia/commons/8/8d/Ethene-2D-flat.png";
+}
+else if(resultado == "cetona"){
+    grupo = "Cetona 💅";
+    descripcion = "Eres el centro de atención (literal, estás en medio de la cadena). Disuelves el drama rápido y te encanta el brillo.";
+    imagen = "https://www.lifeder.com/wp-content/uploads/2018/03/Cetonas-1.png";
+}
+else if(resultado == "aldehido"){
+    grupo = "Aldehído 📢";
+    descripcion = "Siempre vas al frente (estás al final de la cadena). Eres súper expresivo(a), dramático(a) y todo el mundo nota cuando llegas.";
+    imagen = "https://upload.wikimedia.org/wikipedia/commons/9/9f/Aldehyde.png";
+}
+else if(resultado == "acido"){
+    grupo = "Ácido Carboxílico 🍋";
+    descripcion = "Tienes un carácter fuerte y un humor un poco agrio, pero en el fondo eres súper importante para que todo funcione.";
+    imagen = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBi26jnEYfBS7EBVF2aMuheaKCMC2VmlsvFQ&s";
+}
+else if(resultado == "alquino"){
+    grupo = "Alquino 💎";
+    descripcion = "Tienes un enlace triple, o sea, eres la definición de 'no me hables'. Romper tus barreras es casi imposible, eres súper leal.";
+    imagen = "https://examtimeassets.s3.amazonaws.com/uploads/media/image/39703556/desktop_c61c8a6f-8082-46c1-ad1f-7ad957793759.png";
+}
+else if(resultado == "fenol"){
+    grupo = "Fenol 🧬";
+    descripcion = "Eres un misterio envuelto en un anillo aromático. Tienes vibras de personaje principal de película indie.";
+    imagen = "https://www.merckmillipore.com/waroot/xl/822296_Phenol[822296_Phenol-ALL].jpg";
+}
+else if(resultado == "tiol"){
+    grupo = "Tiol 🧄";
+    descripcion = "Eres único(a) y de gustos muy específicos. Tienes una personalidad que deja huella (a veces demasiada huella).";
+    imagen = "https://upload.wikimedia.org/wikipedia/commons/2/28/Thiol-group.png";
+}
+else{
+    grupo = "Alcano 🪨";
+    descripcion = "Eres la persona más tranquila del mundo. Cero dramas, enlaces simples, te da flojera reaccionar por nada. Una roca.";
+    imagen = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQZhUvVdQ31Ev_LSTD851KVLYKmQYnkZfPyA&s";
+}
+
+    document.getElementById("resultado").style.display = "flex";
+
+    document.getElementById("tituloResultado").innerText =
+    grupo;
+
+    document.getElementById("descripcionResultado").innerText =
+    descripcion;
+
+    document.getElementById("imagenResultado").src =
+    imagen;
+
+}
+
+// COMPARTIR
+function compartir(){
+
+    let titulo =
+    document.getElementById("tituloResultado").innerText;
+
+    let descripcion =
+    document.getElementById("descripcionResultado").innerText;
+
+    let texto =
+
+    "🧪 Me salió: " + titulo + "\n\n" +
+    descripcion + "\n\n" +
+    "Descubre qué grupo funcional eres 😎";
+
+    // COMPARTIR EN TELEFONO
+    if(navigator.share){
+
+        navigator.share({
+
+            title:"¿Qué grupo funcional eres?",
+            text:texto,
+            url:window.location.href
+
+        });
+
+    }
+
+    // SI NO FUNCIONA
+    else{
+
+        alert("Tu navegador no soporta compartir 😿");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

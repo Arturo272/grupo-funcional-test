@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>¿Qué grupo funcional eres?</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      overflow:hidden;
+    }
+
+    .contenedor{
+      text-align:center;
+      max-width:900px;
+      padding:40px;
+      position:relative;
+    }
+
+    h1{
+      font-size:4rem;
+      margin-bottom:20px;
+      color:#38bdf8;
+      text-shadow:0 0 15px rgba(56,189,248,0.5);
+    }
+
+    p{
+      font-size:1.3rem;
+      line-height:1.8;
+      color:#e2e8f0;
+      margin-bottom:35px;
+    }
+
+    .btn{
+      background:#38bdf8;
+      color:#0f172a;
+      border:none;
+      padding:15px 40px;
+      font-size:1.2rem;
+      border-radius:15px;
+      cursor:pointer;
+      transition:0.3s;
+      font-weight:bold;
+      box-shadow:0 0 20px rgba(56,189,248,0.4);
+    }
+
+    .btn:hover{
+      transform:scale(1.08);
+      background:#7dd3fc;
+    }
+
+    .cientifico{
+      position:absolute;
+      width:220px;
+      transition:0.3s;
+    }
+
+    .cientifico:hover{
+      transform:scale(1.05) rotate(2deg);
+    }
+
+    .izquierda{
+      left:-180px;
+      bottom:0;
+    }
+
+    .derecha{
+      right:-180px;
+      bottom:0;
+    }
+
+    @media(max-width:1000px){
+
+      .cientifico{
+        width:150px;
+      }
+
+      .izquierda{
+        left:-70px;
+      }
+
+      .derecha{
+        right:-70px;
+      }
+
+      h1{
+        font-size:2.8rem;
+      }
+
+      p{
+        font-size:1.1rem;
+      }
+    }
+
+    @media(max-width:700px){
+
+      .cientifico{
+        display:none;
+      }
+
+      h1{
+        font-size:2.3rem;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="contenedor">
+
+    <!-- Imagen izquierda -->
+    <img 
+      src="mon.gif"
+      alt="cientifico"
+      class="cientifico izquierda"
+    >
+
+    <!-- Imagen derecha -->
+    <img 
+      src="mon2.gif"
+      alt="cientifico"
+      class="cientifico derecha"
+    >
+
+    <h1>¿Qué grupo funcional eres?</h1>
+
+    <p>
+      Esta página te hará 30 preguntas totalmente científicas
+      (o casi 😎). Dependiendo de tus respuestas descubrirás
+      qué grupo funcional representa mejor tu personalidad.
+    </p>
+
+    <a href="Pregunta.html">
+        <button class="btn">
+        Iniciar
+        </button>
+    </a>
+  </div>
+
+</body>
+</html>
